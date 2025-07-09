@@ -74,7 +74,7 @@ ssl-auto-renewal/
 
 ```bash
 # 1. Download project
-git clone <your-repo-url> ssl-auto-renewal
+git clone https://github.com/lovisnd/ssl-auto-renew.git ssl-auto-renewal
 cd ssl-auto-renewal
 
 # 2. Run installation script
