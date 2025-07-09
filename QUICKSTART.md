@@ -27,7 +27,7 @@ This guide will help you quickly deploy the SSL certificate auto-renewal system 
 ```bash
 # Download project files to server
 cd /tmp
-git clone <your-repo-url> ssl-auto-renewal
+git clone https://github.com/lovisnd/ssl-auto-renew.git ssl-auto-renewal
 cd ssl-auto-renewal
 
 # Or download directly as archive
@@ -256,7 +256,7 @@ sudo tail -f /var/log/syslog | grep CRON
 ```bash
 # 下载项目文件到服务器
 cd /tmp
-git clone <your-repo-url> ssl-auto-renewal
+git clone https://github.com/lovisnd/ssl-auto-renew.git ssl-auto-renewal
 cd ssl-auto-renewal
 
 # 或者直接下载压缩包
