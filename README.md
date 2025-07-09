@@ -299,3 +299,9 @@ sudo /opt/ssl-auto-renewal/scripts/ssl-renew.sh
 ⭐ If this project helps you, please give it a star!
 
 🔒 **Make SSL certificate management simple and reliable!**
+
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=lovisnd/ssl-auto-renew&type=Date)](https://www.star-history.com/#lovisnd/ssl-auto-renew&Date)
