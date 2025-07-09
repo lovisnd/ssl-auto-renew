@@ -302,6 +302,6 @@ sudo /opt/ssl-auto-renewal/scripts/ssl-renew.sh
 
 
 
-## Star History
+## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=lovisnd/ssl-auto-renew&type=Date)](https://www.star-history.com/#lovisnd/ssl-auto-renew&Date)
