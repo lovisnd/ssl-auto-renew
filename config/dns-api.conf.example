@@ -1,0 +1,29 @@
+# DNS API配置文件示例
+# 请复制此文件为 dns-api.conf 并填入您的实际API密钥
+# cp dns-api.conf.example dns-api.conf
+
+# DNS服务商类型 (dnspod, aliyun, cloudflare, tencent, huawei)
+DNS_PROVIDER="cloudflare"
+
+# DNSPod配置 (腾讯云DNS)
+DNSPOD_ID="your-dnspod-id"
+DNSPOD_KEY="your-dnspod-key"
+
+# 阿里云DNS配置
+ALIYUN_ACCESS_KEY_ID="your-aliyun-access-key-id"
+ALIYUN_ACCESS_KEY_SECRET="your-aliyun-access-key-secret"
+
+# Cloudflare配置
+CLOUDFLARE_EMAIL="your-email@domain.com"
+CLOUDFLARE_API_KEY="your-cloudflare-api-key"
+
+# 腾讯云DNS配置
+TENCENT_SECRET_ID="your-tencent-secret-id"
+TENCENT_SECRET_KEY="your-tencent-secret-key"
+
+# 华为云DNS配置
+HUAWEI_ACCESS_KEY_ID="your-huawei-access-key-id"
+HUAWEI_SECRET_ACCESS_KEY="your-huawei-secret-access-key"
+
+# 默认邮箱
+DEFAULT_EMAIL="admin@localhost"

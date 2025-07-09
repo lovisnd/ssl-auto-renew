@@ -1,0 +1,36 @@
+# 敏感配置文件
+config/dns-api.conf
+config/email.conf
+
+# 日志文件
+logs/
+*.log
+
+# 临时文件
+*.tmp
+*.bak
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 证书文件
+*.pem
+*.crt
+*.key
+
+# acme.sh相关文件
+.acme.sh/
+
+# 备份文件
+*.backup
+*.orig
+
+# IDE文件
+.vscode/
+.idea/
+
+# 运行时文件
+*.pid
+*.sock

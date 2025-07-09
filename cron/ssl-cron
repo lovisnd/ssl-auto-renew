@@ -1,0 +1,139 @@
+# SSL证书自动续订系统 - Cron定时任务配置
+#
+# 此文件包含SSL证书自动续订相关的定时任务配置
+# 安装脚本会自动将这些任务添加到系统crontab中
+#
+# Cron时间格式说明:
+# 分钟(0-59) 小时(0-23) 日期(1-31) 月份(1-12) 星期(0-7,0和7都表示周日)
+#
+# 特殊字符:
+# * : 匹配任何值
+# , : 分隔多个值
+# - : 表示范围
+# / : 表示间隔
+
+# ================================
+# 主要任务：SSL证书续订检查
+# ================================
+
+# 每天凌晨2点检查并续订SSL证书
+# 这是主要的续订任务，会检查所有配置的域名
+0 2 * * * /opt/ssl-auto-renewal/scripts/ssl-renew.sh >> /opt/ssl-auto-renewal/logs/cron.log 2>&1
+
+# ================================
+# 监控任务：证书状态检查
+# ================================
+
+# 每天上午8点检查证书状态（仅检查，不续订）
+# 用于监控证书健康状态，生成状态报告
+0 8 * * * /opt/ssl-auto-renewal/scripts/check-ssl.sh --all --report /opt/ssl-auto-renewal/logs/daily-report.txt >> /opt/ssl-auto-renewal/logs/check-cron.log 2>&1
+
+# 每周一上午9点发送周报（如果启用了邮件通知）
+0 9 * * 1 /opt/ssl-auto-renewal/scripts/notify.sh --status >> /opt/ssl-auto-renewal/logs/notify-cron.log 2>&1
+
+# ================================
+# 维护任务：日志清理
+# ================================
+
+# 每月1号凌晨3点清理30天前的日志文件
+# 防止日志文件占用过多磁盘空间
+0 3 1 * * find /opt/ssl-auto-renewal/logs -name "*.log" -mtime +30 -delete >> /opt/ssl-auto-renewal/logs/cleanup.log 2>&1
+
+# 每月1号凌晨3点30分清理Let's Encrypt的旧日志
+30 3 1 * * find /var/log/letsencrypt -name "*.log*" -mtime +60 -delete >> /opt/ssl-auto-renewal/logs/cleanup.log 2>&1
+
+# ================================
+# 备用任务：紧急检查
+# ================================
+
+# 每6小时检查一次是否有已过期的证书
+# 这是一个安全网，确保过期证书能被及时发现
+0 */6 * * * /opt/ssl-auto-renewal/scripts/check-ssl.sh --all | grep -q "已过期" && /opt/ssl-auto-renewal/scripts/notify.sh --emergency "发现已过期的SSL证书" >> /opt/ssl-auto-renewal/logs/emergency-cron.log 2>&1
+
+# ================================
+# 系统维护任务
+# ================================
+
+# 每周日凌晨4点更新Certbot
+# 确保使用最新版本的Certbot
+0 4 * * 0 snap refresh certbot >> /opt/ssl-auto-renewal/logs/update-cron.log 2>&1
+
+# 每天凌晨1点检查磁盘空间
+# 如果/etc/letsencrypt目录所在分区使用率超过90%，发送警告
+0 1 * * * df /etc/letsencrypt | tail -1 | awk '{if($5+0 > 90) print "磁盘空间不足: " $5}' | grep -q "磁盘空间不足" && /opt/ssl-auto-renewal/scripts/notify.sh --emergency "SSL证书目录磁盘空间不足" >> /opt/ssl-auto-renewal/logs/disk-cron.log 2>&1
+
+# ================================
+# 可选任务（默认注释，根据需要启用）
+# ================================
+
+# 每小时检查Web服务器状态
+# 确保Nginx/Apache正常运行，SSL证书才能正常工作
+# 0 * * * * systemctl is-active --quiet nginx || /opt/ssl-auto-renewal/scripts/notify.sh --emergency "Nginx服务异常" >> /opt/ssl-auto-renewal/logs/service-cron.log 2>&1
+
+# 每天中午12点测试证书续订功能（dry-run模式）
+# 用于验证续订功能是否正常，不会实际申请证书
+# 0 12 * * * /opt/ssl-auto-renewal/scripts/ssl-renew.sh --test >> /opt/ssl-auto-renewal/logs/test-cron.log 2>&1
+
+# 每月15号发送月度报告
+# 0 9 15 * * /opt/ssl-auto-renewal/scripts/notify.sh --status >> /opt/ssl-auto-renewal/logs/monthly-cron.log 2>&1
+
+# ================================
+# 自定义任务区域
+# ================================
+# 在此区域添加你的自定义定时任务
+# 例如：特定域名的单独检查、备份任务等
+
+# 示例：每天检查特定重要域名
+# 0 */4 * * * /opt/ssl-auto-renewal/scripts/check-ssl.sh important-domain.com >> /opt/ssl-auto-renewal/logs/important-domain.log 2>&1
+
+# ================================
+# 注意事项
+# ================================
+#
+# 1. 时区设置：
+#    确保服务器时区设置正确，cron任务按服务器本地时间执行
+#    查看时区：timedatectl
+#    设置时区：timedatectl set-timezone Asia/Shanghai
+#
+# 2. 日志轮转：
+#    建议配置logrotate来管理日志文件，防止日志文件过大
+#
+# 3. 邮件通知：
+#    如果系统没有配置邮件服务，cron执行结果不会通过邮件发送
+#    建议配置本地邮件服务或使用脚本中的邮件通知功能
+#
+# 4. 权限问题：
+#    确保cron任务以root权限运行，因为需要访问/etc/letsencrypt目录
+#
+# 5. 网络依赖：
+#    SSL证书续订需要网络连接到Let's Encrypt服务器
+#    确保服务器能够访问外网
+#
+# 6. 域名解析：
+#    确保所有配置的域名都正确解析到当前服务器IP
+#
+# 7. Web服务器：
+#    确保Web服务器（Nginx/Apache）正常运行且配置正确
+#
+# 8. 防火墙：
+#    确保80和443端口对外开放
+#
+# ================================
+# 安装说明
+# ================================
+#
+# 此文件中的任务会在运行install.sh时自动添加到系统crontab
+# 
+# 手动安装方法：
+# 1. 复制需要的任务行
+# 2. 运行：crontab -e
+# 3. 粘贴任务行并保存
+#
+# 查看当前cron任务：
+# crontab -l
+#
+# 查看cron服务状态：
+# systemctl status cron
+#
+# 查看cron日志：
+# tail -f /var/log/syslog | grep CRON
