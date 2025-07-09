@@ -216,7 +216,7 @@ ssl-auto-renewal/
 
 ```bash
 # 1. 下载项目
-git clone <your-repo-url> ssl-auto-renewal
+git clone https://github.com/lovisnd/ssl-auto-renew.git ssl-auto-renewal
 cd ssl-auto-renewal
 
 # 2. 运行安装脚本
